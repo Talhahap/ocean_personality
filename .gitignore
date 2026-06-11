@@ -1,0 +1,39 @@
+# environment
+.venv/
+venv/
+
+# python
+__pycache__/
+*.pyc
+
+# config
+.env
+
+# dataset & data
+data/
+dataset/
+
+# model deep learning
+*.h5
+*.pth
+weights/
+
+# logs
+logs/
+
+# IDE
+.vscode/
+.vs/
+
+# others
+*.ipynb_checkpoints/
+
+# flask uploads
+flask_app/uploads/
+flask_app/uploads/*
+
+# reports artifacts
+reports/
+
+# large dataset folder
+CVPR 2017 dataset/

@@ -1,0 +1,97 @@
+{% extends 'base.html' %}
+{% block title %}Dashboard · OCEAN Predictor{% endblock %}
+{% block content %}
+
+<section class="hero">
+  <h1>Halo, {{ user.full_name or user.username }} 👋</h1>
+  <p class="muted">Pilih: <b>upload</b> video atau <b>rekam</b> langsung via webcam. Output: 5 skor Big Five (OCEAN).</p>
+</section>
+
+<section class="card">
+  <form id="predictForm" class="form predict-form">
+    <label>
+      <span>Nama subjek <small>(opsional — siapa yang ada di video)</small></span>
+      <input type="text" name="subject_name" placeholder="contoh: Andi, Sari, dll" />
+    </label>
+
+    <div class="tabs">
+      <button type="button" class="tab tab-active" data-tab="upload">📁 Upload Video</button>
+      <button type="button" class="tab" data-tab="record">📹 Rekam via Webcam</button>
+    </div>
+
+    <!-- Tab: Upload -->
+    <div class="tab-panel" data-panel="upload">
+      <input type="file" id="videoInput" name="video" accept="video/*" />
+      <small class="muted">Format: mp4, webm, mov, avi, mkv · Max 200 MB</small>
+      <video id="uploadPreview" controls hidden></video>
+    </div>
+
+    <!-- Tab: Record -->
+    <div class="tab-panel hidden" data-panel="record">
+      <video id="liveCam" autoplay muted playsinline></video>
+      <div class="rec-controls">
+        <button type="button" id="btnStartCam" class="btn-ghost">Start camera</button>
+        <button type="button" id="btnRecord"   class="btn-primary" disabled>● Mulai rekam</button>
+        <button type="button" id="btnStop"     class="btn-ghost"   disabled>■ Stop</button>
+        <span id="recTimer" class="rec-timer">00:00</span>
+      </div>
+      <video id="recordedPreview" controls hidden></video>
+    </div>
+
+    <input type="hidden" name="source" id="sourceField" value="upload" />
+
+    <button type="submit" id="btnPredict" class="btn-primary btn-block" disabled>
+      🧠 Prediksi OCEAN
+    </button>
+  </form>
+
+  <div id="status" class="status hidden"></div>
+  <div id="resultBox" class="result-box hidden">
+    <h2>Hasil Prediksi</h2>
+    <div class="trait-grid" id="traitGrid"></div>
+    <div class="result-actions">
+      <a id="detailLink" class="btn-primary" href="#">Lihat detail →</a>
+    </div>
+  </div>
+</section>
+
+<section class="card">
+  <h2>Riwayat Prediksi <small class="muted">(20 terakhir)</small></h2>
+  {% if history %}
+    <div class="table-wrap">
+      <table class="history">
+        <thead>
+          <tr>
+            <th>#</th><th>Subjek</th><th>Sumber</th>
+            <th>O (%)</th><th>C (%)</th><th>E (%)</th><th>A (%)</th><th>N (%)</th>
+            <th>Waktu</th><th></th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for h in history %}
+          <tr>
+            <td>{{ h.id }}</td>
+            <td>{{ h.subject_name or '—' }}</td>
+            <td><span class="badge badge-{{ h.source }}">{{ h.source }}</span></td>
+            <td>{{ '%.2f'|format(h.openness) }}%</td>
+            <td>{{ '%.2f'|format(h.conscientiousness) }}%</td>
+            <td>{{ '%.2f'|format(h.extraversion) }}%</td>
+            <td>{{ '%.2f'|format(h.agreeableness) }}%</td>
+            <td>{{ '%.2f'|format(h.neuroticism) }}%</td>
+            <td>{{ h.created_at.strftime('%d %b %Y %H:%M') }}</td>
+            <td><a href="{{ url_for('view_result', pid=h.id) }}">detail</a></td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  {% else %}
+    <p class="muted">Belum ada prediksi. Coba upload video di atas! 👆</p>
+  {% endif %}
+</section>
+
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/main.js') }}"></script>
+{% endblock %}

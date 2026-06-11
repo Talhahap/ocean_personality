@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+{% block title %}Login · OCEAN Predictor{% endblock %}
+{% block content %}
+<div class="auth-wrap">
+  <div class="auth-card">
+    <h1>Welcome back</h1>
+    <p class="muted">Login dulu buat mulai prediksi kepribadian dari video wajah.</p>
+
+    <form method="POST" action="{{ url_for('login') }}" class="form">
+      <label>
+        <span>Username / Email</span>
+        <input type="text" name="username" required autofocus placeholder="vincen / vincen@email.com" />
+      </label>
+      <label>
+        <span>Password</span>
+        <input type="password" name="password" required placeholder="••••••••" />
+      </label>
+      <button type="submit" class="btn-primary btn-block">Login</button>
+    </form>
+
+    <p class="auth-foot">
+      Belum punya akun? <a href="{{ url_for('register') }}">Register</a>
+    </p>
+  </div>
+
+  <div class="auth-side">
+    <h2>Big Five (OCEAN) Personality</h2>
+    <ul class="trait-list">
+      <li><b>O</b>penness <span>— keterbukaan terhadap pengalaman baru</span></li>
+      <li><b>C</b>onscientiousness <span>— ketelitian & disiplin</span></li>
+      <li><b>E</b>xtraversion <span>— tingkat sosialitas</span></li>
+      <li><b>A</b>greeableness <span>— kerjasama & empati</span></li>
+      <li><b>N</b>euroticism <span>— stabilitas emosi</span></li>
+    </ul>
+  </div>
+</div>
+{% endblock %}

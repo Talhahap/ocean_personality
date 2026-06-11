@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% block title %}Register · OCEAN Predictor{% endblock %}
+{% block content %}
+<div class="auth-wrap">
+  <div class="auth-card">
+    <h1>Create account</h1>
+    <p class="muted">Daftar dulu, langsung bisa upload video buat di-prediksi.</p>
+
+    <form method="POST" action="{{ url_for('register') }}" class="form">
+      <label>
+        <span>Username</span>
+        <input type="text" name="username" required minlength="3" maxlength="64" placeholder="vincen" />
+      </label>
+      <label>
+        <span>Email</span>
+        <input type="email" name="email" required placeholder="vincen@email.com" />
+      </label>
+      <label>
+        <span>Full name <small>(opsional)</small></span>
+        <input type="text" name="full_name" placeholder="Vincensius Elang" />
+      </label>
+      <label>
+        <span>Password</span>
+        <input type="password" name="password" required minlength="6" placeholder="min. 6 karakter" />
+      </label>
+      <button type="submit" class="btn-primary btn-block">Daftar</button>
+    </form>
+
+    <p class="auth-foot">
+      Udah punya akun? <a href="{{ url_for('login') }}">Login</a>
+    </p>
+  </div>
+
+  <div class="auth-side">
+    <h2>How it works</h2>
+    <ol class="steps">
+      <li>Upload video wajah / rekam pakai webcam (~15 detik cukup)</li>
+      <li>MTCNN auto-extract 10 frame wajah dari video</li>
+      <li>Model ArcFace + LSTM prediksi 5 trait OCEAN</li>
+      <li>Hasil tersimpan di history lu</li>
+    </ol>
+  </div>
+</div>
+{% endblock %}

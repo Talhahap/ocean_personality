@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+{% block title %}Hasil #{{ pred.id }} · OCEAN Predictor{% endblock %}
+{% block content %}
+
+<section class="hero">
+  <a href="{{ url_for('dashboard') }}" class="back-link">← kembali ke dashboard</a>
+  <h1>Hasil Prediksi #{{ pred.id }}</h1>
+  <p class="muted">
+    Subjek: <b>{{ pred.subject_name or '—' }}</b> ·
+    Sumber: <span class="badge badge-{{ pred.source }}">{{ pred.source }}</span> ·
+    {# ERROR 1 FIX: guard None sebelum strftime #}
+    {% if pred.created_at %}
+      {{ pred.created_at.strftime('%d %B %Y, %H:%M') }}
+    {% else %}
+      —
+    {% endif %}
+  </p>
+</section>
+
+<div class="result-layout">
+  <section class="card">
+    <h2>Video</h2>
+    {# ERROR 5 FIX: tambah type attribute & fallback text di dalam tag video #}
+    <video controls
+           src="{{ url_for('uploaded_file', filename=pred.video_filename) }}"
+           type="video/webm"
+           style="width:100%; max-height:480px; border-radius:12px; background:#000;">
+      Browser kamu tidak mendukung pemutaran video.
+    </video>
+    {# ERROR 2 FIX: format processing_time dengan 2 desimal, bukan tampilkan None mentah #}
+    {% if pred.processing_time is not none %}
+      <p class="muted">⏱ Diproses dalam {{ "%.2f"|format(pred.processing_time) }} detik</p>
+    {% endif %}
+  </section>
+
+  <section class="card">
+    <h2>5 Trait OCEAN</h2>
+    <div class="trait-grid">
+      {% set traits = [
+        ('Openness',          pred.openness,          '#7c3aed', 'Keterbukaan terhadap pengalaman baru'),
+        ('Conscientiousness', pred.conscientiousness, '#0891b2', 'Ketelitian, disiplin, terorganisir'),
+        ('Extraversion',      pred.extraversion,      '#ea580c', 'Tingkat sosialitas & energi'),
+        ('Agreeableness',     pred.agreeableness,     '#16a34a', 'Kerjasama, empati, kepercayaan'),
+        ('Neuroticism',       pred.neuroticism,       '#dc2626', 'Tingkat kecemasan / stabilitas emosi'),
+      ] %}
+      {% for name, val, color, desc in traits %}
+      <div class="trait-card">
+        <div class="trait-head">
+          <span class="trait-name">{{ name }}</span>
+          {# Nilai sudah dalam persen (0-100) dari DB #}
+          <span class="trait-val">{{ '%.2f'|format(val) }}%</span>
+        </div>
+        <div class="bar-wrap">
+          {# Nilai sudah 0-100, clamp saja tanpa ×100 #}
+          {% set bar_pct = [[val | round(1), 0] | max, 100] | min %}
+          <div class="bar-fill" style="width: {{ bar_pct }}%; background-color: {{ color }};"></div>
+        </div>
+        <small class="muted">{{ desc }}</small>
+      </div>
+      {% endfor %}
+    </div>
+  </section>
+</div>
+
+{% endblock %}
